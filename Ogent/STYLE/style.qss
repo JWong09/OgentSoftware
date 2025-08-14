@@ -1,0 +1,81 @@
+/* LOGIN AND OPENING PAGE STYLE */
+QWidget {
+    background-color: #505052
+}
+
+#loginPage {
+    background-color: #505052;
+    color: white;
+    font-family: "Segoe UI", sans-serif;
+}
+
+#brandingLabel {
+    font-size: 50px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: white;
+    text-shadow: 2px 2px 2px #000;
+}
+
+#loginTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: white;
+    
+}
+
+QLineEdit {
+    padding: 8px;
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+    border: none;
+}
+
+#loginButton {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+#loginButton:hover {
+    background-color: rgb(85, 84, 84);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    
+}
+
+#guestButton {
+    color: white;
+    padding: 5px;
+}
+
+#guestButton:hover {
+    text-decoration: underline;
+    color: #ccc;
+}
+
+#forgotPassword {
+    font-size: 10px;
+    color: #ddd;
+}
+
+#guestButton {
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    background: transparent;
+}
+
+#guestButton:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* DASHBOARD STYLE */
+
