@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QStackedWidget
 
 from login import LoginPage
@@ -10,7 +11,11 @@ init_db()
 
 app = QApplication(sys.argv)
 
-with open("STYLE/style.qss", "r") as f:
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+style_path = os.path.join(base_dir, "STYLE", "style.qss")
+
+with open(style_path, "r") as f:
     app.setStyleSheet(f.read())
 
 stack = QStackedWidget()

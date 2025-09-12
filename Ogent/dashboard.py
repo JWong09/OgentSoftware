@@ -1,10 +1,11 @@
 import sys
+import cv2
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout,
     QGroupBox, QPushButton, QLabel, QComboBox, QInputDialog, QMessageBox
 )
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QIcon, QImage, QPixmap
+from PyQt5.QtCore import QSize, Qt, QTimer
 from Database.db import get_user_id, add_profile, get_profiles, update_profile_name, delete_profile, get_profile_settings
 
 class DashboardPage(QWidget):
@@ -18,6 +19,13 @@ class DashboardPage(QWidget):
         self.setObjectName("dashboardPage")
 
         self.init_ui()
+
+        PI_IP = "192.168.100.228"
+        self.cap = cv2.VideoCapture(f"http://{PI_IP}:8000/video")  # 0 = default laptop webcam
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_camera_feed)
+        self.timer.start(30)  # ~30 FPS
+
 
     def init_ui(self):
         main_layout = QHBoxLayout()
@@ -57,9 +65,9 @@ class DashboardPage(QWidget):
         
 
         icons = [
-            ("icons/plus.svg", self.add_profile_dialog),
-            ("icons/edit.svg", self.edit_profile_dialog),
-            ("icons/trash-2.svg", self.delete_profile_dialog)
+            ("Ogent/icons/plus.svg", self.add_profile_dialog),
+            ("Ogent/icons/edit.svg", self.edit_profile_dialog),
+            ("Ogent/icons/trash-2.svg", self.delete_profile_dialog)
         ]
 
         profile_buttons_layout = QHBoxLayout()
@@ -137,6 +145,22 @@ class DashboardPage(QWidget):
         self.close()
         self.logout_callback()
 
+# CAMERA FEED
+    def update_camera_feed(self):
+        ret, frame = self.cap.read()
+        if ret:
+            # Convert frame from BGR (OpenCV) to RGB (Qt expects RGB)
+            frame = cv2.flip(frame, 1)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = frame.shape
+            bytes_per_line = ch * w
+            qt_img = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+            self.camera_label.setPixmap(QPixmap.fromImage(qt_img))
+
+        else:
+            self.camera_label.setText("No stream available")
+            self.camera_label.setAlignment(Qt.AlignCenter)
+
     def load_profiles(self):
         self.profile_combo.clear()
         profiles = get_profiles(self.user_id)
@@ -191,6 +215,11 @@ class DashboardPage(QWidget):
             left_action, right_action = settings
             self.left_status.setText(left_action if left_action else "No Action Set")
             self.right_status.setText(right_action if right_action else "No Action Set")
+
+    def closeEvent(self, event):
+        if hasattr(self, "cap"):
+            self.cap.release()
+        event.accept()
         
 # Test Launch
 if __name__ == "__main__":
